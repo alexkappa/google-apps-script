@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "target": "es2019",
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true
+  }
+}
