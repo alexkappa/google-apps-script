@@ -1,32 +1,28 @@
-import BugHunter, {
-  SpreadsheetAppInterface,
-  SpreadsheetInterface,
-  SheetInterface,
-  RangeInterface,
-} from "./BugHunter";
+import BugHunter from "./BugHunter";
 import Slack, { PostMessagePayload } from "./Slack";
 
+// @ts-ignore
+global.Logger = {
+  log: (data: any) => {
+    return this;
+  },
+};
+
 // A stubbed implementation of the global SpreadsheetApp so that we can work
-// with Google App Script constructs without
-const app: SpreadsheetAppInterface = {
-  getActiveSpreadsheet(): SpreadsheetInterface {
-    return {
-      getUrl(): string {
-        return "https://docs.google.com/spreadsheets/d/xxx/edit";
-      },
-    };
-  },
-  getActiveSheet(): SheetInterface {
-    return {
-      getDataRange(): RangeInterface {
-        return {
-          getValues(): any[][] {
-            return values;
-          },
-        };
-      },
-    };
-  },
+// with Google App Script constructs without invoking their actual API.
+// @ts-ignore
+global.SpreadsheetApp = {
+  // @ts-ignore
+  getActiveSpreadsheet: () => ({
+    getUrl: (): string => "https://docs.google.com/spreadsheets/d/xxx/edit",
+  }),
+  // @ts-ignore
+  getActiveSheet: () => ({
+    // @ts-ignore
+    getDataRange: () => ({
+      getValues: () => values
+    }),
+  }),
 };
 
 const values = [
@@ -57,29 +53,28 @@ describe("BugHunter", () => {
   test("notify() on a workday", () => {
     const slack = new Slack("token");
     const workday = new Date("2023-03-03T09:00:00");
-    const bugHunter = new BugHunter(app, slack, workday);
+    const bugHunter = new BugHunter(slack, workday);
 
     bugHunter.notify("channel");
 
     expect(postMessageMock).toHaveBeenCalledTimes(2);
-    
+
     expect(postMessageMock.mock.results[0].value.ok).toBe(true);
     expect(postMessageMock.mock.results[0].value.channel).toBe("channel");
     expect(postMessageMock.mock.results[0].value.ts).toBe("123.456");
     expect(postMessageMock.mock.results[0].value.message.text).toContain("<@U000000000X>");
-    
+
     expect(postMessageMock.mock.results[1].value.ok).toBe(true);
     expect(postMessageMock.mock.results[1].value.channel).toBe("channel");
     expect(postMessageMock.mock.results[1].value.message.text).toContain("`@Bob`");
     expect(postMessageMock.mock.results[1].value.message.text).toContain("`@Alice`");
     expect(postMessageMock.mock.results[1].value.message.text).toContain("`@Charlie`");
-    
   });
 
   test("notify() on a weekend", () => {
     const slack = new Slack("token");
     const weekend = new Date("2023-03-04T09:00:00");
-    const bugHunter = new BugHunter(app, slack, weekend);
+    const bugHunter = new BugHunter(slack, weekend);
 
     bugHunter.notify("channel");
 

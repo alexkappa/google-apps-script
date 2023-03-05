@@ -12,20 +12,20 @@ export default class BugHunter {
   
   slack: Slack;
 
-  spreadsheet: SpreadsheetInterface
+  spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet;
 
   bugHunter: string;
   bugHunterRota: string[];
 
   today: Date;
 
-  constructor(app: SpreadsheetAppInterface, slack: Slack, today: Date = new Date()) {
+  constructor(slack: Slack, today?: Date) {
 
     this.slack = slack;
 
-    this.spreadsheet = app.getActiveSpreadsheet();
+    this.spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 
-    const sheet = app.getActiveSheet();
+    const sheet = SpreadsheetApp.getActiveSheet();
     const sheetData = sheet.getDataRange().getValues();
     
     this.bugHunter = sheetData[1][14]; // Cell O2: Assignee Slack Member ID
@@ -39,7 +39,7 @@ export default class BugHunter {
       this.bugHunterRota.push(rota);
     }
 
-    this.today = today;
+    this.today = today || new Date();
   }
 
   private isWeekend() {
@@ -49,7 +49,7 @@ export default class BugHunter {
 
   notify(channel: string) {
     if (this.isWeekend()) {
-      // Logger.log(`Don't bother anybody, it's the weekend...`);
+      Logger.log(`Don't bother anybody, it's the weekend...`);
       return;
     }
 
@@ -77,21 +77,4 @@ export default class BugHunter {
       users: [this.bugHunter],
     });
   }
-}
-
-export interface SpreadsheetAppInterface {
-  getActiveSpreadsheet(): SpreadsheetInterface
-  getActiveSheet(): SheetInterface
-}
-
-export interface SpreadsheetInterface {
-  getUrl(): string
-}
-
-export interface SheetInterface {
-  getDataRange(): RangeInterface
-}
-
-export interface RangeInterface {
-  getValues(): any[][]
 }

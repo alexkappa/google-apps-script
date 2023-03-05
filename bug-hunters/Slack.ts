@@ -2,8 +2,8 @@
  * A client for interacting with the Slack API.
  */
 export default class Slack {
-  token: string;
-
+  private token: string;
+  
   constructor(token: string) {
     this.token = token;
   }
@@ -32,7 +32,7 @@ export default class Slack {
 
   /**
    * Assigns a user to a user group.
-   * @param UpdateUserGroupPayload payload 
+   * @param UpdateUserGroupPayload payload
    * @returns object
    */
   updateUserGroup(payload: UpdateUserGroupPayload) {
@@ -42,9 +42,9 @@ export default class Slack {
         method: "post",
         contentType: "application/x-www-form-urlencoded",
         headers: { Authorization: `Bearer ${this.token}` },
-        payload: { 
-          usergroup: payload.userGroup, 
-          users: payload.users.join(',') 
+        payload: {
+          usergroup: payload.userGroup,
+          users: payload.users.join(","),
         },
       }
     );
@@ -65,8 +65,4 @@ export interface PostMessagePayload {
 export interface UpdateUserGroupPayload {
   userGroup: string;
   users: string[];
-}
-
-interface LoggerInterface {
-
 }
