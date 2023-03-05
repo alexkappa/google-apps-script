@@ -1,4 +1,4 @@
-name: TypeScript
+name: Bug Hunters
 
 on:
   push:
@@ -19,9 +19,11 @@ jobs:
         node-version: 16.x
 
     - name: Build
+      working-directory: ./bug-hunters
       run: |
         npm install
 
     - name: Test
+      working-directory: ./bug-hunters
       run: |
         npm run test -- --verbose
