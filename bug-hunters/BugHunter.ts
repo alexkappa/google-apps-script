@@ -28,11 +28,11 @@ export default class BugHunter {
     const sheet = SpreadsheetApp.getActiveSheet();
     const sheetData = sheet.getDataRange().getValues();
     
-    this.bugHunter = sheetData[1][14]; // Cell O2: Assignee Slack Member ID
+    this.bugHunter = sheetData[1][13]; // Cell N2: Assignee Slack Member ID
     this.bugHunterRota = [];
 
     for (var i = 1; i < sheetData.length; i++) {
-      let rota = sheetData[i][17]; // Cell R2: Next Assignee Slack Member ID
+      let rota = sheetData[i][16]; // Cells Q2:Q11 Next Assignee Next Assignee Name
       if (rota.trim() === "") {
         break;
       }

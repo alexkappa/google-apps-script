@@ -3,6 +3,7 @@
     "lib": ["esnext"],
     "target": "es2019",
     "experimentalDecorators": true,
+    "module": "None",
     "moduleResolution": "node",
     "esModuleInterop": true
   }
