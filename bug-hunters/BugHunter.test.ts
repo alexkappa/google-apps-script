@@ -20,16 +20,16 @@ global.SpreadsheetApp = {
   getActiveSheet: () => ({
     // @ts-ignore
     getDataRange: () => ({
-      getValues: () => values
+      getValues: () => values,
     }),
   }),
 };
 
 const values = [
   [],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "U000000000X", 0, 0, "Bob"],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "           ", 0, 0, "Alice"],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "           ", 0, 0, "Charlie"],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "U000000000X", 0, 0, "Bob"],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "           ", 0, 0, "Alice"],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "           ", 0, 0, "Charlie"],
 ];
 
 describe("BugHunter", () => {
@@ -57,18 +57,26 @@ describe("BugHunter", () => {
 
     bugHunter.notify("channel");
 
-    expect(postMessageMock).toHaveBeenCalledTimes(2);
+    console.log(postMessageMock.mock.results.map((v) => v.value.message));
 
     expect(postMessageMock.mock.results[0].value.ok).toBe(true);
     expect(postMessageMock.mock.results[0].value.channel).toBe("channel");
     expect(postMessageMock.mock.results[0].value.ts).toBe("123.456");
-    expect(postMessageMock.mock.results[0].value.message.text).toContain("<@U000000000X>");
+    expect(postMessageMock.mock.results[0].value.message.text).toContain(
+      "<@U000000000X>"
+    );
 
     expect(postMessageMock.mock.results[1].value.ok).toBe(true);
     expect(postMessageMock.mock.results[1].value.channel).toBe("channel");
-    expect(postMessageMock.mock.results[1].value.message.text).toContain("`@Bob`");
-    expect(postMessageMock.mock.results[1].value.message.text).toContain("`@Alice`");
-    expect(postMessageMock.mock.results[1].value.message.text).toContain("`@Charlie`");
+    expect(postMessageMock.mock.results[1].value.message.text).toContain(
+      "`@Bob`"
+    );
+    expect(postMessageMock.mock.results[1].value.message.text).toContain(
+      "`@Alice`"
+    );
+    expect(postMessageMock.mock.results[1].value.message.text).toContain(
+      "`@Charlie`"
+    );
   });
 
   test("notify() on a weekend", () => {

@@ -9,7 +9,6 @@ import Slack from "./Slack";
  * assigning them as the only user of a user group.
  */
 export default class BugHunter {
-  
   slack: Slack;
 
   spreadsheet: GoogleAppsScript.Spreadsheet.Spreadsheet;
@@ -20,14 +19,13 @@ export default class BugHunter {
   today: Date;
 
   constructor(slack: Slack, today?: Date) {
-
     this.slack = slack;
 
     this.spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 
     const sheet = SpreadsheetApp.getActiveSheet();
     const sheetData = sheet.getDataRange().getValues();
-    
+
     this.bugHunter = sheetData[1][13]; // Cell N2: Assignee Slack Member ID
     this.bugHunterRota = [];
 
@@ -67,6 +65,29 @@ export default class BugHunter {
     this.slack.postMessage({
       channel,
       text,
+      thread_ts: response.ts,
+    });
+
+    const monitors = [
+      "<https://app.datadoghq.com/dashboard/jzn-tb7-7hs/homesprod-photoshoot|Homes Photoshoot>",
+      "<https://app.datadoghq.com/dashboard/uvd-2qq-cf6/avalon|Avalon>",
+      "<https://app.datadoghq.com/dashboard/ac2-bbm-qam/blue-brainprod-utilities|BlueBrain Utilities>",
+      "<https://app.datadoghq.com/dashboard/y3p-293-yzb/blue-brainprod-move-in|BlueBrain Move-in>",
+    ];
+
+    let textMonitors = `The following are monitors or dashboards to keep an eye on:\n\n`;
+    for (const monitor of monitors) {
+      textMonitors += `• ${monitor}\n`;
+    }
+
+    textMonitors +=
+      `\n` +
+      `:warning: Please remember to enable notifications from <#CE1K8M8JD> ` +
+      `and prioritize bugs above other work for today.\n`;
+
+    this.slack.postMessage({
+      channel,
+      text: textMonitors,
       thread_ts: response.ts,
     });
   }
